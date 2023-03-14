@@ -1,8 +1,7 @@
 package org.example.service;
 
-import org.example.controller.AdminController;
+import org.example.container.Comp;
 import org.example.dto.Book;
-import org.example.dto.Student;
 import org.example.dto.StudentBook;
 import org.example.enums.Status;
 import org.example.repository.BookRepository;
@@ -11,7 +10,7 @@ import org.example.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.time.LocalDate;
 
 @Service
 public class StudentBookService {
@@ -23,7 +22,7 @@ public class StudentBookService {
     StudentRepository studentRepository;
 
 
-    public void studentTakeBook(Integer book_id) {
+    public void studentTakeBook(Integer book_id, Integer amount, LocalDate createDate) {
 
         Book book = bookRepository.getBookById(book_id);
         if (book == null ) {
@@ -34,12 +33,12 @@ public class StudentBookService {
             System.out.println("sorry, you can not take book  ");
         }
 
-        List<Book> allBookList = bookRepository.getAllBookList();
-//        List<StudentBook> studentTakeBookList = studentBookRepository.getStudentTakeBookList();
-//        List<Student> allStudent = studentRepository.getAllStudent();
 
         StudentBook studentBooks = new StudentBook();
+        studentBooks.setStudent_id(Comp.current_student.getId());
         studentBooks.setBook_id(book_id);
+        studentBooks.setDuration(amount);
+       studentBooks.setCreateDate(createDate);
         studentBookRepository.addTakeStudentBook(studentBooks);
         System.out.println("student takes book successfully");
     }
