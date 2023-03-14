@@ -1,6 +1,8 @@
 package org.example.service;
 
+import org.example.controller.AdminController;
 import org.example.dto.Book;
+import org.example.dto.Student;
 import org.example.dto.StudentBook;
 import org.example.enums.Status;
 import org.example.repository.BookRepository;
@@ -9,43 +11,57 @@ import org.example.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class StudentBookService {
     @Autowired
     BookRepository bookRepository;
     @Autowired
-    StudentRepository studentRepository;
-    @Autowired
     StudentBookRepository studentBookRepository;
+    @Autowired
+    StudentRepository studentRepository;
 
-    public String takeBook(Integer book_id) {
+
+    public void studentTakeBook(Integer book_id) {
 
         Book book = bookRepository.getBookById(book_id);
-    //   Student student = studentRepository.getStudentById(student_id);
-
         if (book == null ) {
-            return "Student olgan kitoblar mavjud emas!";
+            System.out.println("Student olgan kitoblar mavjud emas!");
         }
         int count = studentTookBookCount(book_id);
         if (count >= 5) {
-            return "sorry, you can not take book  ";
+            System.out.println("sorry, you can not take book  ");
         }
+
+        List<Book> allBookList = bookRepository.getAllBookList();
+//        List<StudentBook> studentTakeBookList = studentBookRepository.getStudentTakeBookList();
+//        List<Student> allStudent = studentRepository.getAllStudent();
+
         StudentBook studentBooks = new StudentBook();
-       // studentBooks.setStudent_id();
         studentBooks.setBook_id(book_id);
-        studentBookRepository.addStudentBook(studentBooks);
-        return "take book";
+        studentBookRepository.addTakeStudentBook(studentBooks);
+        System.out.println("student takes book successfully");
     }
 
     private int studentTookBookCount(Integer book_id) {
         int count = 0;
-        for (StudentBook sb : studentBookRepository.getStudentBookList()) {
+        for (StudentBook sb : studentBookRepository.getStudentTakeBookList()) {
             if (sb.getBook_id().equals(book_id) && sb.getStatus().equals(Status.TAKEN)) {
                 count++;
             }
         }
         return count;
     }
+
+    public  void sTakeBookList(){
+        for(StudentBook sb: studentBookRepository.getStudentTakeBookList() ){
+            if(sb.getStatus().equals(Status.TAKEN)){
+                System.out.println(sb.toString());
+            }
+        }
+    }
+
 
 
 }
